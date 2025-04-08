@@ -3,6 +3,7 @@ package handlers
 import (
 	"math"
 	"net/http"
+	"strings"
 
 	"go-uniswap-price-fetcher/internal/config"
 	"go-uniswap-price-fetcher/internal/service/helpers"
@@ -63,6 +64,15 @@ func GetPrice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	priceUSD := "0.0"
+	if poolResponse != nil {
+		if strings.HasPrefix(token0.Symbol, "USD") {
+			priceUSD = poolResponse.Data.Attributes.QuoteTokenPriceUSD
+		} else {
+			priceUSD = poolResponse.Data.Attributes.BaseTokenPriceUSD
+		}
+	}
+
 	price := helpers.CalculatePrice(slot, token0, token1)
 
 	priceResponse := PoolPriceResponse{
@@ -71,7 +81,7 @@ func GetPrice(w http.ResponseWriter, r *http.Request) {
 		Decimals0: int(token0.Decimals),
 		Decimals1: int(token1.Decimals),
 		Price:     math.Round(price*1e6) / 1e6,
-		PriceUSD:  &poolResponse.Data.Attributes.QuoteTokenPriceUSD,
+		PriceUSD:  &priceUSD,
 	}
 
 	helpers.RenderJSON(w, r, priceResponse)
