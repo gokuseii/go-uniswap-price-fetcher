@@ -1,6 +1,6 @@
 # Uniswap price checker with go 
 
-Small Go-based HTTP API that return prcies of Uniswap V3 pool
+Small Go-based HTTP API that returns prices of Uniswap V3 pools
 
 ## Running the API
 
