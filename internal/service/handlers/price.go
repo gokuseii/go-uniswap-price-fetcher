@@ -40,14 +40,14 @@ func GetPrice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if token0 == nil {
-		http.Error(w, errors.New("looks like pool not exists").Error(), http.StatusNotFound)
-		return
-	}
-
 	token1, err := helpers.GetTokenData(client, req.Pool, 1)
 	if err != nil {
 		http.Error(w, errors.Wrap(err, "failed to fetch second token").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if token0 == nil || token1 == nil {
+		http.Error(w, errors.New("looks like pool not exists").Error(), http.StatusNotFound)
 		return
 	}
 
