@@ -64,12 +64,12 @@ func GetPrice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	priceUSD := "0.0"
+	var priceUSD *string
 	if poolResponse != nil {
 		if strings.HasPrefix(token0.Symbol, "USD") {
-			priceUSD = poolResponse.Data.Attributes.QuoteTokenPriceUSD
+			priceUSD = &poolResponse.Data.Attributes.QuoteTokenPriceUSD
 		} else {
-			priceUSD = poolResponse.Data.Attributes.BaseTokenPriceUSD
+			priceUSD = &poolResponse.Data.Attributes.BaseTokenPriceUSD
 		}
 	}
 
@@ -81,7 +81,7 @@ func GetPrice(w http.ResponseWriter, r *http.Request) {
 		Decimals0: int(token0.Decimals),
 		Decimals1: int(token1.Decimals),
 		Price:     math.Round(price*1e6) / 1e6,
-		PriceUSD:  &priceUSD,
+		PriceUSD:  priceUSD,
 	}
 
 	helpers.RenderJSON(w, r, priceResponse)
